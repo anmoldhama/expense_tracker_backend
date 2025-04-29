@@ -10,6 +10,10 @@ interface AuthenticatedRequest extends Request {
 
 export const userAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<any> => {
   try {
+      const jwtSecret = process.env.JWT_SECRET || "UBER_CLONE";
+
+      if (!jwtSecret) throw new Error("JWT_SECRET is not set");
+
       const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
 
       if (!token) {
@@ -23,7 +27,7 @@ export const userAuth = async (req: AuthenticatedRequest, res: Response, next: N
         return res.status(401).json({message: "Token is already used"});
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { _id: string };
+      const decoded = jwt.verify(token, jwtSecret) as { _id: string };
       const user = await User.findById(decoded._id);
 
       if (!user) {
