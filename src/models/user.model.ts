@@ -28,7 +28,7 @@ userSchema.statics.hashPassword = async function (password: string): Promise<str
     
 // Instance method to generate JWT
 userSchema.methods.getJWT = async function () {
-    const token = await jwt.sign({ _id: this._id, first_name: this.fullName.firstName, email: this.email }, process.env.JWT_SECRET as string, {expiresIn: '24h'});
+    const token = await jwt.sign({ _id: this._id, first_name: this.fullName.firstName, email: this.email }, process.env.JWT_SECRET || "UBER_CLONE" as string, {expiresIn: '24h'});
     return token;
 };
 
